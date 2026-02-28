@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372402795002",
+    "project_id": "the-ghost-portal",
+    "storage_bucket": "the-ghost-portal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372402795002:android:8f7b228be2608e5a5d3443",
+        "android_client_info": {
+          "package_name": "com.example.the_ghost_portal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372402795002-3r2g5huufv8fdpb8rpe4kgbpbij3vg16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoTcLLqvxaftbtXOKydjUWOTRWG0_jUtc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372402795002-3r2g5huufv8fdpb8rpe4kgbpbij3vg16.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
