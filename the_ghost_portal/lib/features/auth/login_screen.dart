@@ -22,7 +22,13 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isSonicListening = true);
     
     // Trigger Haptic Feedback
-    Vibration.vibrate(duration: 100);
+    try {
+      if (await Vibration.hasVibrator() ?? false) {
+        Vibration.vibrate(duration: 100);
+      }
+    } catch (e) {
+      debugPrint('Vibration error: $e');
+    }
     
     bool success = await _sonicService.listenForSignal();
     
