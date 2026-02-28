@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'color_flow_receiver_screen.dart';
 import '../../core/app_constants.dart';
 import '../../services/owc_service.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ColorFlowScreen extends StatefulWidget {
   const ColorFlowScreen({super.key});
@@ -130,6 +130,16 @@ class _ColorFlowScreenState extends State<ColorFlowScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: _isTransmitting ? null : _handleReceiveData,
+                    icon: const Icon(Icons.qr_code_scanner),
+                    label: const Text('SCAN FOR SIGNALS'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white10,
+                      side: const BorderSide(color: AppColors.neonYellow),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -138,5 +148,25 @@ class _ColorFlowScreenState extends State<ColorFlowScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleReceiveData() async {
+    var status = await Permission.camera.status;
+    if (status.isDenied) {
+      status = await Permission.camera.request();
+    }
+
+    if (status.isGranted && mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ColorFlowReceiverScreen()),
+      );
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Camera permission required for scanning.')),
+        );
+      }
+    }
   }
 }
