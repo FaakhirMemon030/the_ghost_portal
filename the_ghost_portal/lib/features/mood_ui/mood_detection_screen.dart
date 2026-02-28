@@ -5,6 +5,7 @@ import '../../core/app_constants.dart';
 import '../../core/mood_provider.dart';
 import '../../services/biometric_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class MoodDetectionScreen extends StatefulWidget {
   const MoodDetectionScreen({super.key});
@@ -27,12 +28,24 @@ class _MoodDetectionScreenState extends State<MoodDetectionScreen> {
   }
 
   Future<void> _initializeCamera() async {
-    final cameras = await availableCameras();
-    if (cameras.isEmpty) return;
+    var status = await Permission.camera.status;
+    if (status.isDenied) {
+      status = await Permission.camera.request();
+    }
 
-    _controller = CameraController(cameras[0], ResolutionPreset.medium);
-    await _controller!.initialize();
-    if (mounted) setState(() {});
+    if (status.isPermanentlyDenied) {
+      openAppSettings();
+      return;
+    }
+
+    if (status.isGranted) {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) return;
+
+      _controller = CameraController(cameras[0], ResolutionPreset.medium);
+      await _controller!.initialize();
+      if (mounted) setState(() {});
+    }
   }
 
   void _startScan() async {

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:camera/camera.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/app_constants.dart';
 import '../../services/light_service.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class GhostChatScreen extends StatefulWidget {
   const GhostChatScreen({super.key});
@@ -17,6 +17,43 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
   final List<Map<String, String>> _messages = [];
   bool _isFlashing = false;
   Color _flashColor = Colors.transparent;
+
+  bool _isListening = false;
+  CameraController? _cameraController;
+
+  Future<void> _toggleListenMode() async {
+    if (_isListening) {
+      await _cameraController?.dispose();
+      setState(() {
+        _isListening = false;
+        _cameraController = null;
+      });
+      return;
+    }
+
+    var status = await Permission.camera.status;
+    if (status.isDenied) status = await Permission.camera.request();
+
+    if (status.isGranted) {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) return;
+
+      _cameraController = CameraController(cameras[0], ResolutionPreset.low);
+      await _cameraController!.initialize();
+
+      setState(() => _isListening = true);
+
+      final receivedText = await _lightService.detectSignal();
+      if (mounted && _isListening) {
+        setState(() {
+          _messages.add({'sender': 'peer', 'text': receivedText ?? 'SIGNAL LOST'});
+          _isListening = false;
+        });
+        await _cameraController?.dispose();
+        _cameraController = null;
+      }
+    }
+  }
 
   void _sendMessage() async {
     String text = _messageController.text;
@@ -100,14 +137,37 @@ class _GhostChatScreenState extends State<GhostChatScreen> {
                       ),
                     ),
                     IconButton(
+                      icon: Icon(_isListening ? Icons.videocam_off : Icons.videocam, 
+                        color: _isListening ? AppColors.moodAngry : AppColors.portalPurple),
+                      onPressed: _isFlashing ? null : _toggleListenMode,
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.flash_on, color: AppColors.neonYellow),
-                      onPressed: _isFlashing ? null : _sendMessage,
+                      onPressed: _isFlashing || _isListening ? null : _sendMessage,
                     ),
                   ],
                 ),
               ),
             ],
           ),
+          
+          if (_isListening && _cameraController != null && _cameraController!.value.isInitialized)
+            Positioned(
+              top: 100,
+              right: 20,
+              child: Container(
+                width: 120,
+                height: 160,
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.neonYellow, width: 2),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
+                  child: CameraPreview(_cameraController!),
+                ),
+              ),
+            ),
           
           // Flash Overlay
           if (_isFlashing)
