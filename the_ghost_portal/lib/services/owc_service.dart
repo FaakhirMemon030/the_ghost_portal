@@ -19,4 +19,10 @@ class OWCService {
     }
     return colors;
   }
+
+  Future<String?> decodeFromCamera() async {
+    // Simulate camera scanning and decoding logic
+    await Future.delayed(const Duration(seconds: 5));
+    return "SHADOW_PROTOCOL_v1.pdf";
+  }
 }

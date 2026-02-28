@@ -11,6 +11,31 @@ import '../admin/admin_dashboard.dart';
 class HomeDashboard extends StatelessWidget {
   const HomeDashboard({super.key});
 
+  void _handleLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.deepBlack,
+        title: Text('TERMINATE SESSION', style: GoogleFonts.outfit(color: Colors.redAccent)),
+        content: const Text('Are you sure you want to disconnect from The Ghost Portal?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('CANCEL'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+            child: const Text('LOGOUT', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final moodProvider = Provider.of<MoodProvider>(context);
@@ -19,6 +44,10 @@ class HomeDashboard extends StatelessWidget {
       appBar: AppBar(
         title: Text('GHOST PORTAL', style: GoogleFonts.outfit(letterSpacing: 4)),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.logout_outlined, color: Colors.redAccent),
+            onPressed: () => _handleLogout(context),
+          ),
           IconButton(
             icon: const Icon(Icons.account_circle_outlined),
             onPressed: () {},

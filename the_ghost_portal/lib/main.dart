@@ -37,7 +37,12 @@ class GhostPortalApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'The Ghost Portal',
       theme: AppTheme.getDynamicTheme(moodProvider.moodColor),
-      home: const SplashScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeDashboard(),
+      },
     );
   }
 }
