@@ -3,14 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_constants.dart';
 
 class AppTheme {
-  static ThemeData get darkTheme {
+  static ThemeData getDynamicTheme(Color seedColor) {
     return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: AppColors.portalPurple,
+      primaryColor: seedColor,
       scaffoldBackgroundColor: AppColors.deepBlack,
       textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
       colorScheme: ColorScheme.dark(
-        primary: AppColors.portalPurple,
+        primary: seedColor,
         secondary: AppColors.neonYellow,
         surface: Colors.white.withOpacity(0.05),
       ),
